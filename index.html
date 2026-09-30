@@ -1,0 +1,3864 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TableTennis Control</title>
+
+<style>
+:root{
+  --navy:#0f172a;
+  --blue:#2563eb;
+  --blue2:#dbeafe;
+  --green:#16a34a;
+  --green2:#dcfce7;
+  --gray:#64748b;
+  --light:#f5f7fb;
+  --line:#dbe2ea;
+  --white:#fff;
+  --red:#dc2626;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    "Noto Sans JP",
+    sans-serif;
+  background:var(--light);
+  color:#172033;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  min-height:100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+  height:72px;
+  background:var(--navy);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:800;
+  font-size:20px;
+}
+
+.logo{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:#2563eb;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+}
+
+.header-actions{
+  display:flex;
+  gap:10px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn{
+  border:0;
+  border-radius:11px;
+  padding:11px 16px;
+  font-weight:700;
+  transition:.15s;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn-primary{
+  background:var(--blue);
+  color:#fff;
+}
+
+.btn-light{
+  background:#fff;
+  color:#172033;
+}
+
+.btn-outline{
+  background:#fff;
+  border:2px solid #1f2937;
+  color:#172033;
+}
+
+.btn-danger{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.btn-small{
+  padding:8px 11px;
+  font-size:14px;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 72px);
+}
+
+.sidebar{
+  width:260px;
+  background:#fff;
+  border-right:1px solid var(--line);
+  padding:22px 12px;
+  flex-shrink:0;
+}
+
+.nav{
+  display:grid;
+  gap:7px;
+}
+
+.nav button{
+  border:0;
+  background:transparent;
+  text-align:left;
+  padding:14px 16px;
+  border-radius:14px;
+  font-weight:700;
+  color:#334155;
+  font-size:16px;
+}
+
+.nav button.active{
+  background:#e8f0ff;
+  color:#1557d6;
+}
+
+.main{
+  flex:1;
+  padding:34px;
+  max-width:1600px;
+  margin:auto;
+  width:100%;
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.page-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  margin-bottom:24px;
+}
+
+h1{
+  font-size:30px;
+  margin:0 0 4px;
+}
+
+.sub{
+  color:#64748b;
+  margin:0;
+}
+
+.actions{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 8px 25px rgba(15,23,42,.05);
+  padding:22px;
+}
+
+.stat-label{
+  color:#64748b;
+  font-size:14px;
+}
+
+.stat-value{
+  font-size:34px;
+  font-weight:800;
+  margin-top:6px;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:20px;
+}
+
+.section-title{
+  font-size:20px;
+  font-weight:800;
+  margin:0 0 15px;
+}
+
+/* =========================
+   COURTS
+========================= */
+
+.courts{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.court{
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:16px;
+  background:#f8fafc;
+}
+
+.court.live{
+  background:var(--green2);
+  border-color:#86efac;
+}
+
+.court.prep{
+  background:#eff6ff;
+  border-color:#93c5fd;
+}
+
+.court-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.badge-live{
+  background:#bbf7d0;
+  color:#166534;
+}
+
+.badge-empty{
+  background:#e2e8f0;
+  color:#475569;
+}
+
+.badge-prep{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.player-line{
+  font-size:18px;
+  font-weight:800;
+  line-height:1.5;
+}
+
+.vs{
+  font-size:12px;
+  color:#64748b;
+  text-align:center;
+  margin:2px;
+}
+
+/* =========================
+   NEXT MATCH
+========================= */
+
+.next-list{
+  display:grid;
+  gap:10px;
+}
+
+.next-item{
+  border:1px solid #dbeafe;
+  background:#eff6ff;
+  border-radius:13px;
+  padding:13px;
+}
+
+.next-item strong{
+  display:block;
+}
+
+.muted{
+  color:#64748b;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:15px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+}
+
+th,
+td{
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+  white-space:nowrap;
+}
+
+th{
+  background:#f8fafc;
+  font-size:13px;
+  color:#64748b;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.field{
+  display:grid;
+  gap:6px;
+}
+
+.field label{
+  font-weight:700;
+  font-size:14px;
+}
+
+.field input,
+.field select{
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  padding:11px 12px;
+  background:#fff;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.player-add{
+  display:flex;
+  gap:10px;
+  align-items:end;
+}
+
+.player-add .field{
+  flex:1;
+}
+
+.player-list{
+  display:grid;
+  gap:8px;
+  margin-top:16px;
+}
+
+.player-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border:1px solid var(--line);
+  padding:11px 13px;
+  border-radius:11px;
+  background:#fff;
+}
+
+/* =========================
+   TOURNAMENT
+========================= */
+
+.tournament{
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(210px,1fr);
+  gap:18px;
+  overflow:auto;
+  padding-bottom:10px;
+}
+
+.round{
+  display:grid;
+  gap:12px;
+  align-content:start;
+}
+
+.round h3{
+  margin:0;
+  font-size:15px;
+  color:#475569;
+}
+
+.match{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.04);
+}
+
+.match.live{
+  border:2px solid #22c55e;
+}
+
+.match.done{
+  background:#f8fafc;
+}
+
+.match-id{
+  font-size:11px;
+  color:#64748b;
+  margin-bottom:6px;
+}
+
+.match-player{
+  font-weight:700;
+  padding:4px 0;
+}
+
+.winner{
+  font-weight:900;
+  color:#166534;
+}
+
+.score{
+  float:right;
+  color:#64748b;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:50;
+}
+
+.modal-backdrop.show{
+  display:flex;
+}
+
+.modal{
+  width:min(560px,100%);
+  background:#fff;
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 25px 70px rgba(0,0,0,.25);
+}
+
+.modal h2{
+  margin-top:0;
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:20px;
+}
+
+.choice-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:14px 0;
+}
+
+.choice{
+  border:2px solid #dbe2ea;
+  background:#fff;
+  border-radius:13px;
+  padding:15px;
+  text-align:left;
+  font-weight:800;
+}
+
+.choice.selected{
+  border-color:#2563eb;
+  background:#eff6ff;
+}
+
+.notice{
+  padding:12px 14px;
+  border-radius:11px;
+  background:#eff6ff;
+  color:#1d4ed8;
+  margin-bottom:14px;
+}
+
+.empty{
+  padding:28px;
+  text-align:center;
+  color:#64748b;
+}
+
+/* =========================
+   SPECTATOR MODE
+========================= */
+
+.spectator .operator-only{
+  display:none!important;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  background:#172033;
+  color:#fff;
+  padding:13px 17px;
+  border-radius:12px;
+  display:none;
+  z-index:80;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.toast.show{
+  display:block;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+  .sidebar{
+    width:82px;
+    padding:12px 8px;
+  }
+
+  .nav button{
+    font-size:0;
+    text-align:center;
+  }
+
+  .nav button:first-letter{
+    font-size:22px;
+  }
+
+  .main{
+    padding:22px 15px;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid2{
+    grid-template-columns:1fr;
+  }
+
+  .courts{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+
+  header{
+    height:64px;
+    padding:0 12px;
+  }
+
+  .brand{
+    font-size:16px;
+  }
+
+  .logo{
+    width:36px;
+    height:36px;
+  }
+
+  .header-actions .btn{
+    padding:8px 10px;
+    font-size:13px;
+  }
+
+  .sidebar{
+    display:none;
+  }
+
+  .layout{
+    min-height:calc(100vh - 64px);
+  }
+
+  .main{
+    padding:18px 12px;
+  }
+
+  h1{
+    font-size:25px;
+  }
+
+  .page-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .stats{
+    gap:9px;
+  }
+
+  .card{
+    padding:15px;
+    border-radius:15px;
+  }
+
+  .stat-value{
+    font-size:28px;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .full{
+    grid-column:auto;
+  }
+
+  .player-add{
+    align-items:stretch;
+    flex-direction:column;
+  }
+
+  .tournament{
+    grid-auto-columns:minmax(190px,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+  <div class="brand">
+    <div class="logo">🏓</div>
+    TableTennis Control
+  </div>
+
+  <div class="header-actions">
+
+    <button
+      class="btn btn-light"
+      id="modeBtn">
+      📺 選手・観客モード
+    </button>
+
+    <button
+      class="btn btn-light operator-only"
+      id="backupBtn">
+      バックアップ
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+<aside class="sidebar operator-only">
+
+  <nav class="nav">
+
+    <button
+      class="active"
+      data-page="dashboard">
+      📊 進行ダッシュボード
+    </button>
+
+    <button data-page="matches">
+      🏓 試合管理
+    </button>
+
+    <button data-page="tournament">
+      🏆 トーナメント
+    </button>
+
+    <button data-page="players">
+      👥 選手登録
+    </button>
+
+    <button data-page="settings">
+      ⚙️ 大会設定
+    </button>
+
+  </nav>
+
+</aside>
+
+
+<main class="main">
+
+<!-- =========================
+     DASHBOARD
+========================= -->
+
+<section
+  class="page active"
+  id="page-dashboard">
+
+  <div class="page-head">
+
+    <div>
+
+      <h1>
+        進行ダッシュボード
+      </h1>
+
+      <p
+        class="sub"
+        id="eventSubtitle">
+        大会を設定してください
+      </p>
+
+    </div>
+
+    <div class="actions operator-only">
+
+      <button
+        class="btn btn-primary"
+        id="assignBtn">
+        📣 次の試合をコートへ
+      </button>
+
+      <button
+        class="btn btn-outline"
+        id="quickResultBtn">
+        結果入力
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="stats">
+
+    <div class="card">
+
+      <div class="stat-label">
+        試合中
+      </div>
+
+      <div
+        class="stat-value"
+        id="statLive">
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="stat-label">
+        待機中
+      </div>
+
+      <div
+        class="stat-value"
+        id="statWaiting">
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="stat-label">
+        終了試合
+      </div>
+
+      <div
+        class="stat-value"
+        id="statDone">
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="stat-label">
+        空きコート
+      </div>
+
+      <div
+        class="stat-value"
+        id="statEmpty">
+        0
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="grid2">
+
+    <div class="card">
+
+      <h2 class="section-title">
+        現在のコート状況
+      </h2>
+
+      <div
+        class="courts"
+        id="courtGrid">
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2 class="section-title">
+        📣 次に呼ぶ試合
+      </h2>
+
+      <div
+        id="nextMatches"
+        class="next-list">
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     MATCH MANAGEMENT
+========================= -->
+
+<section
+  class="page"
+  id="page-matches">
+
+  <div class="page-head">
+
+    <div>
+
+      <h1>
+        試合管理
+      </h1>
+
+      <p class="sub">
+        試合を選択してコート割当・結果入力を行います。
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <div id="matchTable">
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     TOURNAMENT
+========================= -->
+
+<section
+  class="page"
+  id="page-tournament">
+
+  <div class="page-head">
+
+    <div>
+
+      <h1>
+        トーナメント
+      </h1>
+
+      <p class="sub">
+        勝者を入力すると次の枠へ自動で進みます。
+      </p>
+
+    </div>
+
+    <div class="actions operator-only">
+
+      <button
+        class="btn btn-primary"
+        id="generateBtn">
+        トーナメント生成
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div id="bracket">
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     PLAYERS
+========================= -->
+
+<section
+  class="page"
+  id="page-players">
+
+  <div class="page-head">
+
+    <div>
+
+      <h1>
+        選手登録
+      </h1>
+
+      <p class="sub">
+        選手名と所属を登録します。
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="player-add">
+
+      <div class="field">
+
+        <label>
+          選手名
+        </label>
+
+        <input
+          id="playerName"
+          placeholder="例：田中 太郎">
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          所属
+        </label>
+
+        <input
+          id="playerTeam"
+          placeholder="例：○○高専">
+
+      </div>
+
+
+      <button
+        class="btn btn-primary"
+        id="addPlayerBtn">
+        ＋ 追加
+      </button>
+
+    </div>
+
+
+    <div
+      id="playerList"
+      class="player-list">
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     SETTINGS
+========================= -->
+
+<section
+  class="page"
+  id="page-settings">
+
+  <div class="page-head">
+
+    <div>
+
+      <h1>
+        大会設定
+      </h1>
+
+      <p class="sub">
+        このブラウザに自動保存されます。
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="form-grid">
+
+      <div class="field">
+
+        <label>
+          大会名
+        </label>
+
+        <input
+          id="eventName"
+          placeholder="○○卓球大会">
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          コート数
+        </label>
+
+        <select id="courtCount">
+        </select>
+
+      </div>
+
+
+      <div class="field full">
+
+        <button
+          class="btn btn-primary"
+          id="saveSettingsBtn">
+          設定を保存
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="card"
+    style="margin-top:18px">
+
+    <h2 class="section-title">
+      データ管理
+    </h2>
+
+    <div class="actions">
+
+      <button
+        class="btn btn-outline"
+        id="exportBtn">
+        JSONを書き出す
+      </button>
+
+
+      <label
+        class="btn btn-outline"
+        style="display:inline-flex;align-items:center">
+
+        JSONを読み込む
+
+        <input
+          type="file"
+          id="importFile"
+          accept=".json"
+          hidden>
+
+      </label>
+
+
+      <button
+        class="btn btn-danger"
+        id="resetBtn">
+        大会データを初期化
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+  class="modal-backdrop"
+  id="modalBackdrop">
+
+  <div
+    class="modal"
+    id="modal">
+  </div>
+
+</div>
+
+
+<div
+  class="toast"
+  id="toast">
+</div>
+
+
+<script>
+
+(function(){
+
+"use strict";
+
+
+/* =========================
+   STORAGE
+========================= */
+
+const KEY =
+  "tabletennis-control-v2";
+
+
+const defaultState = {
+
+  settings:{
+    eventName:"",
+    courtCount:4
+  },
+
+  players:[],
+
+  matches:[],
+
+  courts:[],
+
+  generated:false
+
+};
+
+
+let state = loadState();
+
+let spectator = false;
+
+
+/* =========================
+   MULTI TAB SYNC
+========================= */
+
+let channel = null;
+
+try{
+
+  channel =
+    new BroadcastChannel(
+      "tabletennis-control-sync"
+    );
+
+}catch(e){
+
+  channel = null;
+
+}
+
+
+/* =========================
+   UTILITY
+========================= */
+
+function clone(o){
+
+  return JSON.parse(
+    JSON.stringify(o)
+  );
+
+}
+
+
+function loadState(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(KEY);
+
+    if(!raw){
+
+      return clone(
+        defaultState
+      );
+
+    }
+
+    const s =
+      JSON.parse(raw);
+
+    return Object.assign(
+      clone(defaultState),
+      s
+    );
+
+  }catch(e){
+
+    return clone(
+      defaultState
+    );
+
+  }
+
+}
+
+
+function saveState(
+  broadcast = true
+){
+
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(state)
+  );
+
+  if(
+    broadcast &&
+    channel
+  ){
+
+    channel.postMessage({
+
+      type:"state",
+
+      state:state
+
+    });
+
+  }
+
+  renderAll();
+
+}
+
+
+if(channel){
+
+  channel.onmessage =
+    function(ev){
+
+      if(
+        ev.data &&
+        ev.data.type === "state"
+      ){
+
+        state =
+          ev.data.state;
+
+        renderAll();
+
+      }
+
+    };
+
+}
+
+
+window.addEventListener(
+  "storage",
+  function(e){
+
+    if(
+      e.key === KEY &&
+      e.newValue
+    ){
+
+      try{
+
+        state =
+          JSON.parse(
+            e.newValue
+          );
+
+        renderAll();
+
+      }catch(_){}
+
+    }
+
+  }
+);
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function esc(v){
+
+  return String(
+    v == null ? "" : v
+  ).replace(
+    /[&<>"']/g,
+    function(c){
+
+      return {
+
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+
+      }[c];
+
+    }
+  );
+
+}
+
+
+/* =========================
+   PLAYER
+========================= */
+
+function playerLabel(id){
+
+  if(!id){
+
+    return "未定";
+
+  }
+
+  const p =
+    state.players.find(
+      x => x.id === id
+    );
+
+  if(!p){
+
+    return "未定";
+
+  }
+
+  return p.name +
+    (
+      p.team
+        ? "（" + p.team + "）"
+        : ""
+    );
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function toast(msg){
+
+  const el =
+    document.getElementById(
+      "toast"
+    );
+
+  el.textContent = msg;
+
+  el.classList.add(
+    "show"
+  );
+
+  clearTimeout(
+    window.__toast
+  );
+
+  window.__toast =
+    setTimeout(
+      function(){
+
+        el.classList.remove(
+          "show"
+        );
+
+      },
+      2200
+    );
+
+}
+
+
+/* =========================
+   ID
+========================= */
+
+function uid(prefix){
+
+  return (
+    prefix +
+    "_" +
+    Date.now().toString(36) +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2,7)
+  );
+
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+function closeModal(){
+
+  document
+    .getElementById(
+      "modalBackdrop"
+    )
+    .classList.remove(
+      "show"
+    );
+
+}
+
+
+document
+  .getElementById(
+    "modalBackdrop"
+  )
+  .addEventListener(
+    "click",
+    function(e){
+
+      if(
+        e.target.id ===
+        "modalBackdrop"
+      ){
+
+        closeModal();
+
+      }
+
+    }
+  );
+
+
+/* =========================
+   COURTS
+========================= */
+
+function initCourts(){
+
+  const n =
+    Number(
+      state.settings.courtCount
+    ) || 4;
+
+  const old =
+    state.courts || [];
+
+  state.courts =
+    Array.from(
+      {length:n},
+      function(_,i){
+
+        return (
+          old[i] ||
+          {
+            id:i+1,
+            status:"empty",
+            matchId:null
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================
+   ADD PLAYER
+========================= */
+
+function addPlayer(){
+
+  const name =
+    document
+      .getElementById(
+        "playerName"
+      )
+      .value
+      .trim();
+
+  const team =
+    document
+      .getElementById(
+        "playerTeam"
+      )
+      .value
+      .trim();
+
+
+  if(!name){
+
+    toast(
+      "選手名を入力してください"
+    );
+
+    return;
+
+  }
+
+
+  state.players.push({
+
+    id:uid("p"),
+
+    name:name,
+
+    team:team
+
+  });
+
+
+  document
+    .getElementById(
+      "playerName"
+    )
+    .value = "";
+
+
+  document
+    .getElementById(
+      "playerTeam"
+    )
+    .value = "";
+
+
+  saveState();
+
+  toast(
+    "選手を登録しました"
+  );
+
+}
+
+
+/* =========================
+   REMOVE PLAYER
+========================= */
+
+function removePlayer(id){
+
+  if(
+    state.matches.some(
+      m =>
+        m.player1 === id ||
+        m.player2 === id
+    )
+  ){
+
+    toast(
+      "試合に登録済みの選手は削除できません"
+    );
+
+    return;
+
+  }
+
+
+  state.players =
+    state.players.filter(
+      p => p.id !== id
+    );
+
+  saveState();
+
+}
+
+
+/* =========================
+   GENERATE TOURNAMENT
+========================= */
+
+function generateTournament(){
+
+  if(
+    state.players.length < 2
+  ){
+
+    toast(
+      "2人以上登録してください"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    state.matches.length &&
+    !confirm(
+      "現在の試合データを削除して新しく生成しますか？"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const ps =
+    state.players.slice();
+
+
+  const size =
+    Math.pow(
+      2,
+      Math.ceil(
+        Math.log2(
+          ps.length
+        )
+      )
+    );
+
+
+  while(
+    ps.length < size
+  ){
+
+    ps.push(null);
+
+  }
+
+
+  state.matches = [];
+
+
+  const rounds =
+    Math.log2(size);
+
+
+  let previous = [];
+
+
+  /* 第1回戦 */
+
+  for(
+    let i=0;
+    i<size;
+    i+=2
+  ){
+
+    const m = {
+
+      id:uid("m"),
+
+      round:1,
+
+      number:
+        i/2+1,
+
+      player1:
+        ps[i]?.id || null,
+
+      player2:
+        ps[i+1]?.id || null,
+
+      winner:null,
+
+      score:"",
+
+      status:"waiting",
+
+      courtId:null
+
+    };
+
+
+    state.matches.push(m);
+
+    previous.push(
+      m.id
+    );
+
+  }
+
+
+  /* 第2回戦以降 */
+
+  for(
+    let r=2;
+    r<=rounds;
+    r++
+  ){
+
+    const count =
+      size /
+      Math.pow(
+        2,
+        r
+      );
+
+
+    const ids = [];
+
+
+    for(
+      let n=0;
+      n<count;
+      n++
+    ){
+
+      const m = {
+
+        id:uid("m"),
+
+        round:r,
+
+        number:n+1,
+
+        player1:null,
+
+        player2:null,
+
+        winner:null,
+
+        score:"",
+
+        status:"waiting",
+
+        courtId:null,
+
+        source1:
+          previous[n*2],
+
+        source2:
+          previous[n*2+1]
+
+      };
+
+
+      state.matches.push(m);
+
+      ids.push(
+        m.id
+      );
+
+    }
+
+
+    previous = ids;
+
+  }
+
+
+  state.generated = true;
+
+  initCourts();
+
+  autoAssign();
+
+  saveState();
+
+  toast(
+    "トーナメントを生成しました"
+  );
+
+  go("tournament");
+
+}
+
+
+/* =========================
+   GET MATCH
+========================= */
+
+function getMatch(id){
+
+  return state.matches.find(
+    m => m.id === id
+  );
+
+}
+
+
+/* =========================
+   AVAILABLE MATCHES
+========================= */
+
+function nextAvailableMatches(){
+
+  return state.matches.filter(
+
+    function(m){
+
+      return (
+        m.status === "waiting" &&
+        m.player1 &&
+        m.player2 &&
+        !m.courtId
+      );
+
+    }
+
+  );
+
+}
+
+
+/* =========================
+   PROPAGATE WINNER
+========================= */
+
+function propagateWinner(match){
+
+  const targets =
+    state.matches.filter(
+
+      m =>
+        m.source1 === match.id ||
+        m.source2 === match.id
+
+    );
+
+
+  targets.forEach(
+
+    function(t){
+
+      if(
+        t.source1 === match.id
+      ){
+
+        t.player1 =
+          match.winner;
+
+      }
+
+
+      if(
+        t.source2 === match.id
+      ){
+
+        t.player2 =
+          match.winner;
+
+      }
+
+    }
+
+  );
+
+}
+
+
+/* =========================
+   AUTO ASSIGN
+========================= */
+
+function autoAssign(){
+
+  initCourts();
+
+
+  let free =
+    state.courts.filter(
+      c =>
+        c.status === "empty"
+    );
+
+
+  for(
+    const m of
+    nextAvailableMatches()
+  ){
+
+    if(!free.length){
+
+      break;
+
+    }
+
+
+    const c =
+      free.shift();
+
+
+    m.courtId =
+      c.id;
+
+    m.status =
+      "live";
+
+
+    c.status =
+      "live";
+
+    c.matchId =
+      m.id;
+
+  }
+
+}
+
+
+/* =========================
+   ASSIGN NEXT
+========================= */
+
+function assignNext(){
+
+  autoAssign();
+
+  saveState();
+
+  toast(
+    "空きコートへ次の試合を割り当てました"
+  );
+
+}
+
+
+/* =========================
+   RESULT MODAL
+========================= */
+
+function finishMatch(id){
+
+  const m =
+    getMatch(id);
+
+
+  if(!m){
+
+    return;
+
+  }
+
+
+  const p1 =
+    playerLabel(
+      m.player1
+    );
+
+  const p2 =
+    playerLabel(
+      m.player2
+    );
+
+
+  document
+    .getElementById(
+      "modal"
+    )
+    .innerHTML = `
+
+      <h2>
+        結果入力
+      </h2>
+
+      <div class="notice">
+
+        勝者とセットカウントを入力してください。<br>
+
+        例：3-0、3-1、3-2
+
+      </div>
+
+
+      <div class="choice-grid">
+
+        <button
+          class="choice"
+          data-w="${esc(m.player1)}">
+
+          ${esc(p1)}
+
+        </button>
+
+
+        <button
+          class="choice"
+          data-w="${esc(m.player2)}">
+
+          ${esc(p2)}
+
+        </button>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          セットカウント
+        </label>
+
+        <input
+          id="resultScore"
+          placeholder="例：3-1"
+          maxlength="3">
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          class="btn btn-outline"
+          id="cancelModal">
+
+          キャンセル
+
+        </button>
+
+
+        <button
+          class="btn btn-primary"
+          id="confirmResult">
+
+          結果を確定
+
+        </button>
+
+      </div>
+
+    `;
+
+
+  let winner = null;
+
+
+  document
+    .querySelectorAll(
+      ".choice"
+    )
+    .forEach(
+
+      function(b){
+
+        b.onclick =
+          function(){
+
+            winner =
+              b.dataset.w;
+
+
+            document
+              .querySelectorAll(
+                ".choice"
+              )
+              .forEach(
+                function(x){
+
+                  x.classList.remove(
+                    "selected"
+                  );
+
+                }
+              );
+
+
+            b.classList.add(
+              "selected"
+            );
+
+          };
+
+      }
+
+    );
+
+
+  document
+    .getElementById(
+      "cancelModal"
+    )
+    .onclick =
+      closeModal;
+
+
+  document
+    .getElementById(
+      "confirmResult"
+    )
+    .onclick =
+      function(){
+
+        if(!winner){
+
+          toast(
+            "勝者を選択してください"
+          );
+
+          return;
+
+        }
+
+
+        const score =
+          document
+            .getElementById(
+              "resultScore"
+            )
+            .value
+            .trim();
+
+
+        if(
+          !/^[0-9]+-[0-9]+$/.test(
+            score
+          )
+        ){
+
+          toast(
+            "セットカウントを 3-1 の形式で入力してください"
+          );
+
+          return;
+
+        }
+
+
+        m.winner =
+          winner;
+
+        m.score =
+          score;
+
+        m.status =
+          "done";
+
+
+        if(m.courtId){
+
+          const c =
+            state.courts.find(
+              x =>
+                x.id ===
+                m.courtId
+            );
+
+
+          if(c){
+
+            c.status =
+              "empty";
+
+            c.matchId =
+              null;
+
+          }
+
+
+          m.courtId =
+            null;
+
+        }
+
+
+        propagateWinner(m);
+
+        closeModal();
+
+        autoAssign();
+
+        saveState();
+
+        toast(
+          "結果を登録しました"
+        );
+
+      };
+
+
+  document
+    .getElementById(
+      "modalBackdrop"
+    )
+    .classList.add(
+      "show"
+    );
+
+}
+
+
+/* =========================
+   ASSIGN SPECIFIC MATCH
+========================= */
+
+function assignSpecific(id){
+
+  const m =
+    getMatch(id);
+
+
+  if(
+    !m ||
+    m.status === "done"
+  ){
+
+    return;
+
+  }
+
+
+  initCourts();
+
+
+  const free =
+    state.courts.find(
+      c =>
+        c.status === "empty"
+    );
+
+
+  if(!free){
+
+    toast(
+      "空きコートがありません"
+    );
+
+    return;
+
+  }
+
+
+  m.courtId =
+    free.id;
+
+  m.status =
+    "live";
+
+
+  free.status =
+    "live";
+
+  free.matchId =
+    m.id;
+
+
+  saveState();
+
+  toast(
+    "コート" +
+    free.id +
+    "へ割り当てました"
+  );
+
+}
+
+
+/* =========================
+   RESET MATCH
+========================= */
+
+function resetMatch(id){
+
+  const m =
+    getMatch(id);
+
+
+  if(!m){
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      "この試合の結果をリセットしますか？"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  if(m.courtId){
+
+    const c =
+      state.courts.find(
+        x =>
+          x.id ===
+          m.courtId
+      );
+
+
+    if(c){
+
+      c.status =
+        "empty";
+
+      c.matchId =
+        null;
+
+    }
+
+  }
+
+
+  m.courtId =
+    null;
+
+  m.winner =
+    null;
+
+  m.score =
+    "";
+
+  m.status =
+    "waiting";
+
+
+  state.matches.forEach(
+
+    function(x){
+
+      if(
+        x.source1 === m.id
+      ){
+
+        x.player1 =
+          null;
+
+      }
+
+
+      if(
+        x.source2 === m.id
+      ){
+
+        x.player2 =
+          null;
+
+      }
+
+    }
+
+  );
+
+
+  saveState();
+
+  toast(
+    "結果をリセットしました"
+  );
+
+}
+
+
+/* =========================
+   PAGE NAVIGATION
+========================= */
+
+function go(page){
+
+  document
+    .querySelectorAll(
+      ".page"
+    )
+    .forEach(
+      x =>
+        x.classList.remove(
+          "active"
+        )
+    );
+
+
+  const el =
+    document.getElementById(
+      "page-" + page
+    );
+
+
+  if(el){
+
+    el.classList.add(
+      "active"
+    );
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".nav button"
+    )
+    .forEach(
+
+      function(x){
+
+        x.classList.toggle(
+          "active",
+          x.dataset.page === page
+        );
+
+      }
+
+    );
+
+}
+
+
+/* =========================
+   RENDER DASHBOARD
+========================= */
+
+function renderDashboard(){
+
+  initCourts();
+
+
+  const live =
+    state.matches.filter(
+      m =>
+        m.status === "live"
+    ).length;
+
+
+  const waiting =
+    state.matches.filter(
+      m =>
+        m.status === "waiting" &&
+        m.player1 &&
+        m.player2
+    ).length;
+
+
+  const done =
+    state.matches.filter(
+      m =>
+        m.status === "done"
+    ).length;
+
+
+  const empty =
+    state.courts.filter(
+      c =>
+        c.status === "empty"
+    ).length;
+
+
+  document
+    .getElementById(
+      "statLive"
+    )
+    .textContent =
+      live;
+
+
+  document
+    .getElementById(
+      "statWaiting"
+    )
+    .textContent =
+      waiting;
+
+
+  document
+    .getElementById(
+      "statDone"
+    )
+    .textContent =
+      done;
+
+
+  document
+    .getElementById(
+      "statEmpty"
+    )
+    .textContent =
+      empty;
+
+
+  document
+    .getElementById(
+      "eventSubtitle"
+    )
+    .textContent =
+      state.settings.eventName ||
+      "大会を設定してください";
+
+
+  const cg =
+    document.getElementById(
+      "courtGrid"
+    );
+
+
+  cg.innerHTML =
+    state.courts
+      .map(
+
+        function(c){
+
+          const m =
+            c.matchId
+              ? getMatch(
+                  c.matchId
+                )
+              : null;
+
+
+          const label =
+            c.status === "live"
+              ? "試合中"
+              : c.status === "prep"
+                ? "準備中"
+                : "空き";
+
+
+          return `
+
+            <div class="court ${c.status}">
+
+              <div class="court-top">
+
+                <strong>
+                  コート ${c.id}
+                </strong>
+
+                <span
+                  class="badge ${
+                    c.status === "live"
+                      ? "badge-live"
+                      : c.status === "prep"
+                        ? "badge-prep"
+                        : "badge-empty"
+                  }">
+
+                  ${label}
+
+                </span>
+
+              </div>
+
+
+              ${
+                m
+                  ? `
+
+                    <div class="player-line">
+
+                      ${esc(
+                        playerLabel(
+                          m.player1
+                        )
+                      )}
+
+                    </div>
+
+
+                    <div class="vs">
+                      VS
+                    </div>
+
+
+                    <div class="player-line">
+
+                      ${esc(
+                        playerLabel(
+                          m.player2
+                        )
+                      )}
+
+                    </div>
+
+
+                    <div
+                      class="muted"
+                      style="margin-top:8px">
+
+                      第${m.round}回戦
+
+                    </div>
+
+
+                    <button
+                      class="btn btn-primary btn-small operator-only"
+                      style="margin-top:10px"
+                      onclick="window.finishMatch('${m.id}')">
+
+                      結果入力
+
+                    </button>
+
+                  `
+                  :
+                  `
+
+                    <div class="empty">
+
+                      空きコート
+
+                    </div>
+
+                  `
+              }
+
+            </div>
+
+          `;
+
+        }
+
+      )
+      .join("");
+
+
+  if(!state.courts.length){
+
+    cg.innerHTML =
+      `
+        <div class="empty">
+          コートを設定してください。
+        </div>
+      `;
+
+  }
+
+
+  const next =
+    nextAvailableMatches();
+
+
+  const nl =
+    document.getElementById(
+      "nextMatches"
+    );
+
+
+  nl.innerHTML =
+    next.length
+      ?
+
+        next
+          .slice(0,8)
+          .map(
+
+            function(m,i){
+
+              return `
+
+                <div class="next-item">
+
+                  <strong>
+
+                    ${
+                      i === 0
+                        ? "📣 "
+                        : ""
+                    }
+
+                    第${m.round}回戦　
+
+                    ${esc(
+                      playerLabel(
+                        m.player1
+                      )
+                    )}
+
+                    vs
+
+                    ${esc(
+                      playerLabel(
+                        m.player2
+                      )
+                    )}
+
+                  </strong>
+
+
+                  <span class="muted">
+
+                    ${
+                      i === 0
+                        ? "次に呼ぶ試合"
+                        : "待機中"
+                    }
+
+                  </span>
+
+
+                  <button
+                    class="btn btn-primary btn-small operator-only"
+                    style="margin-top:8px"
+                    onclick="window.assignSpecific('${m.id}')">
+
+                    この試合を呼ぶ
+
+                  </button>
+
+                </div>
+
+              `;
+
+            }
+
+          )
+          .join("")
+
+      :
+
+        `
+
+          <div class="empty">
+
+            両選手が確定している待機試合はありません。
+
+          </div>
+
+        `;
+
+}
+
+
+/* =========================
+   RENDER PLAYERS
+========================= */
+
+function renderPlayers(){
+
+  const el =
+    document.getElementById(
+      "playerList"
+    );
+
+
+  if(
+    state.players.length
+  ){
+
+    el.innerHTML =
+      state.players
+        .map(
+
+          function(p,i){
+
+            return `
+
+              <div class="player-row">
+
+                <div>
+
+                  <strong>
+
+                    ${i+1}.
+                    ${esc(p.name)}
+
+                  </strong>
+
+
+                  <span class="muted">
+
+                    ${
+                      p.team
+                        ? "　" +
+                          esc(p.team)
+                        : ""
+                    }
+
+                  </span>
+
+                </div>
+
+
+                <button
+                  class="btn btn-danger btn-small operator-only"
+                  onclick="window.removePlayer('${p.id}')">
+
+                  削除
+
+                </button>
+
+              </div>
+
+            `;
+
+          }
+
+        )
+        .join("");
+
+  }else{
+
+    el.innerHTML =
+      `
+
+        <div class="empty">
+
+          まだ選手が登録されていません。
+
+        </div>
+
+      `;
+
+  }
+
+}
+
+
+/* =========================
+   RENDER MATCHES
+========================= */
+
+function renderMatches(){
+
+  const el =
+    document.getElementById(
+      "matchTable"
+    );
+
+
+  if(
+    !state.matches.length
+  ){
+
+    el.innerHTML =
+      `
+
+        <div class="empty">
+
+          まだトーナメントが生成されていません。
+
+        </div>
+
+      `;
+
+    return;
+
+  }
+
+
+  el.innerHTML =
+    `
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                回戦
+              </th>
+
+              <th>
+                対戦
+              </th>
+
+              <th>
+                状態
+              </th>
+
+              <th>
+                コート
+              </th>
+
+              <th>
+                結果
+              </th>
+
+              <th>
+                操作
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              state.matches
+                .map(
+
+                  function(m){
+
+                    const status =
+                      m.status === "live"
+                        ? "試合中"
+                        : m.status === "done"
+                          ? "終了"
+                          : "待機";
+
+
+                    return `
+
+                      <tr>
+
+                        <td>
+                          第${m.round}回戦
+                        </td>
+
+
+                        <td>
+
+                          <strong>
+
+                            ${esc(
+                              playerLabel(
+                                m.player1
+                              )
+                            )}
+
+                          </strong>
+
+                          vs
+
+                          <strong>
+
+                            ${esc(
+                              playerLabel(
+                                m.player2
+                              )
+                            )}
+
+                          </strong>
+
+                        </td>
+
+
+                        <td>
+                          ${status}
+                        </td>
+
+
+                        <td>
+
+                          ${
+                            m.courtId
+                              ? m.courtId +
+                                "コート"
+                              : "-"
+                          }
+
+                        </td>
+
+
+                        <td>
+
+                          ${
+                            m.winner
+                              ? esc(
+                                  playerLabel(
+                                    m.winner
+                                  )
+                                ) +
+                                " / " +
+                                esc(
+                                  m.score
+                                )
+                              : "-"
+                          }
+
+                        </td>
+
+
+                        <td>
+
+                          ${
+                            m.status === "live"
+
+                              ?
+
+                                `
+
+                                  <button
+                                    class="btn btn-primary btn-small operator-only"
+                                    onclick="window.finishMatch('${m.id}')">
+
+                                    結果
+
+                                  </button>
+
+                                `
+
+                              :
+
+                              m.status === "waiting" &&
+                              m.player1 &&
+                              m.player2
+
+                              ?
+
+                                `
+
+                                  <button
+                                    class="btn btn-outline btn-small operator-only"
+                                    onclick="window.assignSpecific('${m.id}')">
+
+                                    呼ぶ
+
+                                  </button>
+
+                                `
+
+                              :
+                              ""
+                          }
+
+
+                          ${
+                            m.status === "done"
+
+                              ?
+
+                                `
+
+                                  <button
+                                    class="btn btn-danger btn-small operator-only"
+                                    onclick="window.resetMatch('${m.id}')">
+
+                                    リセット
+
+                                  </button>
+
+                                `
+
+                              :
+                              ""
+                          }
+
+                        </td>
+
+                      </tr>
+
+                    `;
+
+                  }
+
+                )
+                .join("")
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+}
+
+
+/* =========================
+   RENDER BRACKET
+========================= */
+
+function renderBracket(){
+
+  const el =
+    document.getElementById(
+      "bracket"
+    );
+
+
+  if(
+    !state.matches.length
+  ){
+
+    el.innerHTML =
+      `
+
+        <div class="empty">
+
+          選手を登録して
+          「トーナメント生成」
+          を押してください。
+
+        </div>
+
+      `;
+
+    return;
+
+  }
+
+
+  const max =
+    Math.max(
+      ...state.matches.map(
+        m => m.round
+      )
+    );
+
+
+  let out =
+    '<div class="tournament">';
+
+
+  for(
+    let r=1;
+    r<=max;
+    r++
+  ){
+
+    const ms =
+      state.matches.filter(
+        m =>
+          m.round === r
+      );
+
+
+    out += `
+
+      <div class="round">
+
+        <h3>
+
+          ${
+            r === max
+              ? "決勝"
+              : "第" + r + "回戦"
+          }
+
+        </h3>
+
+    `;
+
+
+    ms.forEach(
+
+      function(m){
+
+        out += `
+
+          <div class="match ${
+            m.status === "live"
+              ? "live"
+              : m.status === "done"
+                ? "done"
+                : ""
+          }">
+
+            <div class="match-id">
+
+              試合 ${m.number}
+
+            </div>
+
+
+            <div
+              class="match-player ${
+                m.winner === m.player1
+                  ? "winner"
+                  : ""
+              }">
+
+              ${esc(
+                playerLabel(
+                  m.player1
+                )
+              )}
+
+              ${
+                m.winner === m.player1
+                  ?
+                    `
+
+                      <span class="score">
+
+                        ${esc(
+                          m.score
+                        )}
+
+                      </span>
+
+                    `
+                  :
+                    ""
+              }
+
+            </div>
+
+
+            <div
+              class="match-player ${
+                m.winner === m.player2
+                  ? "winner"
+                  : ""
+              }">
+
+              ${esc(
+                playerLabel(
+                  m.player2
+                )
+              )}
+
+            </div>
+
+
+            <div
+              class="muted"
+              style="margin-top:6px">
+
+              ${
+                m.status === "live"
+                  ? "コート " +
+                    m.courtId
+                  : m.status === "done"
+                    ? "終了"
+                    : "待機"
+              }
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+
+    );
+
+
+    out +=
+      "</div>";
+
+  }
+
+
+  out +=
+    "</div>";
+
+
+  el.innerHTML =
+    out;
+
+}
+
+
+/* =========================
+   SETTINGS
+========================= */
+
+function renderSettings(){
+
+  document
+    .getElementById(
+      "eventName"
+    )
+    .value =
+      state.settings.eventName ||
+      "";
+
+
+  document
+    .getElementById(
+      "courtCount"
+    )
+    .value =
+      String(
+        state.settings.courtCount ||
+        4
+      );
+
+}
+
+
+/* =========================
+   RENDER ALL
+========================= */
+
+function renderAll(){
+
+  initCourts();
+
+
+  document.body
+    .classList.toggle(
+      "spectator",
+      spectator
+    );
+
+
+  document
+    .getElementById(
+      "modeBtn"
+    )
+    .textContent =
+      spectator
+        ? "🛠️ 進行係モード"
+        : "📺 選手・観客モード";
+
+
+  renderDashboard();
+
+  renderPlayers();
+
+  renderMatches();
+
+  renderBracket();
+
+  renderSettings();
+
+}
+
+
+/* =========================
+   EVENT LISTENERS
+========================= */
+
+
+/* サイドメニュー */
+
+document
+  .querySelectorAll(
+    ".nav button"
+  )
+  .forEach(
+
+    function(b){
+
+      b.addEventListener(
+        "click",
+        function(){
+
+          go(
+            b.dataset.page
+          );
+
+        }
+      );
+
+    }
+
+  );
+
+
+/* 選手追加 */
+
+document
+  .getElementById(
+    "addPlayerBtn"
+  )
+  .addEventListener(
+    "click",
+    addPlayer
+  );
+
+
+document
+  .getElementById(
+    "playerName"
+  )
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key === "Enter"
+      ){
+
+        addPlayer();
+
+      }
+
+    }
+  );
+
+
+/* トーナメント生成 */
+
+document
+  .getElementById(
+    "generateBtn"
+  )
+  .addEventListener(
+    "click",
+    generateTournament
+  );
+
+
+/* 次の試合をコートへ */
+
+document
+  .getElementById(
+    "assignBtn"
+  )
+  .addEventListener(
+    "click",
+    assignNext
+  );
+
+
+/* 結果入力 */
+
+document
+  .getElementById(
+    "quickResultBtn"
+  )
+  .addEventListener(
+    "click",
+    function(){
+
+      const live =
+        state.matches.find(
+          m =>
+            m.status === "live"
+        );
+
+
+      if(live){
+
+        finishMatch(
+          live.id
+        );
+
+      }else{
+
+        toast(
+          "現在、試合中の試合はありません"
+        );
+
+      }
+
+    }
+  );
+
+
+/* 大会設定保存 */
+
+document
+  .getElementById(
+    "saveSettingsBtn"
+  )
+  .addEventListener(
+    "click",
+    function(){
+
+      state.settings.eventName =
+        document
+          .getElementById(
+            "eventName"
+          )
+          .value
+          .trim();
+
+
+      state.settings.courtCount =
+        Number(
+          document
+            .getElementById(
+              "courtCount"
+            )
+            .value
+        );
+
+
+      initCourts();
+
+      saveState();
+
+      toast(
+        "大会設定を保存しました"
+      );
+
+    }
+  );
+
+
+/* モード切替 */
+
+document
+  .getElementById(
+    "modeBtn"
+  )
+  .addEventListener(
+    "click",
+    function(){
+
+      spectator =
+        !spectator;
+
+      renderAll();
+
+    }
+  );
+
+
+/* バックアップ */
+
+document
+  .getElementById(
+    "backupBtn"
+  )
+  .addEventListener(
+    "click",
+    exportData
+  );
+
+
+document
+  .getElementById(
+    "exportBtn"
+  )
+  .addEventListener(
+    "click",
+    exportData
+  );
+
+
+/* JSON読み込み */
+
+document
+  .getElementById(
+    "importFile"
+  )
+  .addEventListener(
+    "change",
+    function(e){
+
+      const file =
+        e.target.files[0];
+
+
+      if(!file){
+
+        return;
+
+      }
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function(){
+
+          try{
+
+            const imported =
+              JSON.parse(
+                reader.result
+              );
+
+
+            if(
+              !imported.settings ||
+              !Array.isArray(
+                imported.players
+              ) ||
+              !Array.isArray(
+                imported.matches
+              )
+            ){
+
+              throw new Error();
+
+            }
+
+
+            state =
+              imported;
+
+
+            initCourts();
+
+            saveState();
+
+            toast(
+              "バックアップを読み込みました"
+            );
+
+
+          }catch(err){
+
+            toast(
+              "JSONの読み込みに失敗しました"
+            );
+
+          }
+
+        };
+
+
+      reader.readAsText(
+        file
+      );
+
+
+      e.target.value = "";
+
+    }
+  );
+
+
+/* 初期化 */
+
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    function(){
+
+      if(
+        confirm(
+          "大会データをすべて初期化しますか？"
+        )
+      ){
+
+        state =
+          clone(
+            defaultState
+          );
+
+        initCourts();
+
+        saveState();
+
+        toast(
+          "初期化しました"
+        );
+
+        go(
+          "dashboard"
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================
+   EXPORT
+========================= */
+
+function exportData(){
+
+  const blob =
+    new Blob(
+      [
+        JSON.stringify(
+          state,
+          null,
+          2
+        )
+      ],
+      {
+        type:
+          "application/json"
+      }
+    );
+
+
+  const a =
+    document.createElement(
+      "a"
+    );
+
+
+  a.href =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  a.download =
+    "tabletennis-backup.json";
+
+
+  a.click();
+
+
+  setTimeout(
+    function(){
+
+      URL.revokeObjectURL(
+        a.href
+      );
+
+    },
+    1000
+  );
+
+}
+
+
+/* =========================
+   GLOBAL FUNCTIONS
+========================= */
+
+window.finishMatch =
+  finishMatch;
+
+window.assignSpecific =
+  assignSpecific;
+
+window.resetMatch =
+  resetMatch;
+
+window.removePlayer =
+  removePlayer;
+
+
+/* =========================
+   COURT OPTIONS
+========================= */
+
+for(
+  let i=1;
+  i<=8;
+  i++
+){
+
+  const o =
+    document.createElement(
+      "option"
+    );
+
+
+  o.value =
+    i;
+
+
+  o.textContent =
+    i + "コート";
+
+
+  document
+    .getElementById(
+      "courtCount"
+    )
+    .appendChild(
+      o
+    );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+initCourts();
+
+renderAll();
+
+})();
+
+</script>
+
+</body>
+</html>
